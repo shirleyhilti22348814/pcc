@@ -1,5 +1,5 @@
 /* 
-   HILTI 招標資料採集中心 - 全新美化樣式 (第八版 - 2026-04-05 [響應式佈局優化])
+   HILTI 招標資料採集中心 - 全新美化樣式 (第九版 - 2026-04-05 [批次 UI 介面更新])
 */
 
 :root {
@@ -224,6 +224,65 @@ input[type="text"]:focus {
 .status-error i { color: var(--error); }
 
 .hidden { display: none; }
+
+/* 模式切換按鈕 */
+.mode-switch {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 0.4rem;
+    border-radius: 14px;
+    border: 1px solid var(--glass-border);
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 0.75rem;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.tab-btn.active {
+    background: var(--accent);
+    color: white;
+    box-shadow: 0 4px 12px var(--accent-glow);
+}
+
+/* 批次進度條樣式 */
+.batch-status-bar {
+    margin-top: 2rem;
+    padding: 1.25rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 16px;
+    border: 1px solid var(--glass-border);
+}
+
+.progress-info {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+}
+
+.progress-track {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #7c4dff, #00e676);
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
 /* 數據儀表板樣式 */
 .stats-grid {

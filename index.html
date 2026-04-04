@@ -19,14 +19,34 @@
         </header>
 
         <main class="main-content glass-card animate__animated animate__fadeInUp">
-            <div class="input-group">
-                <label for="url-input">標案公告詳細網址 (QueryAtmAwardDetail)</label>
-                <input type="text" id="url-input" placeholder="https://web.pcc.gov.tw/tps/..." autocomplete="off">
+            <div class="mode-switch">
+                <button id="mode-single" class="tab-btn active">單筆抓取</button>
+                <button id="mode-batch" class="tab-btn">總覽批次 (前5筆)</button>
             </div>
 
-            <button id="fetch-btn" class="primary-btn">
-                <i class="fas fa-cloud-download-alt"></i> 抓取並存檔
-            </button>
+            <div id="single-ui">
+                <div class="input-group">
+                    <label for="url-input">標案公告詳細網址 (QueryAtmAwardDetail)</label>
+                    <input type="text" id="url-input" placeholder="https://web.pcc.gov.tw/tps/..." autocomplete="off">
+                </div>
+                <button id="fetch-btn" class="primary-btn">
+                    <i class="fas fa-cloud-download-alt"></i> 抓取並存檔
+                </button>
+            </div>
+
+            <div id="batch-ui" class="hidden">
+                <div class="input-group">
+                    <label for="batch-url-input">總覽頁搜尋結果網址 (readTenderAgent)</label>
+                    <input type="text" id="batch-url-input" placeholder="https://web.pcc.gov.tw/prkms/..." autocomplete="off">
+                </div>
+                <button id="batch-btn" class="primary-btn">
+                    <i class="fas fa-layer-group"></i> 開始批次排查與抓取
+                </button>
+                <div id="batch-progress" class="batch-status-bar hidden">
+                    <div class="progress-info">正在準備批次任務...</div>
+                    <div class="progress-track"><div id="progress-fill" class="progress-fill"></div></div>
+                </div>
+            </div>
 
             <div id="status-display" class="status-box hidden">
                 <div class="status-icon"><i id="status-icon-inner" class="fas fa-check-circle"></i></div>
@@ -98,6 +118,31 @@
         const statusBox = document.getElementById('status-display');
         const msgTitle = document.getElementById('msg-title');
         const msgDetails = document.getElementById('msg-details');
+
+        // 批次相關
+        const batchBtn = document.getElementById('batch-btn');
+        const batchUrlInput = document.getElementById('batch-url-input');
+        const batchProgress = document.getElementById('batch-progress');
+        const progressFill = document.getElementById('progress-fill');
+        const progressInfo = batchProgress.querySelector('.progress-info');
+        const singleUi = document.getElementById('single-ui');
+        const batchUi = document.getElementById('batch-ui');
+        const modeSingle = document.getElementById('mode-single');
+        const modeBatch = document.getElementById('mode-batch');
+
+        modeSingle.addEventListener('click', () => {
+            modeSingle.classList.add('active');
+            modeBatch.classList.remove('active');
+            singleUi.classList.remove('hidden');
+            batchUi.classList.add('hidden');
+        });
+
+        modeBatch.addEventListener('click', () => {
+            modeBatch.classList.add('active');
+            modeSingle.classList.remove('active');
+            batchUi.classList.remove('hidden');
+            singleUi.classList.add('hidden');
+        });
 
         let sessionTotal = 0;
 
@@ -215,6 +260,93 @@
                 logList.innerHTML = '';
             }
             logList.insertBefore(logItem, logList.firstChild);
+        }
+
+        // 批次抓取邏輯
+        batchBtn.addEventListener('click', async () => {
+            const overviewUrl = batchUrlInput.value.trim();
+            if (!overviewUrl) return showResult("錯誤", "請輸入總覽頁網址", true);
+
+            setLoading(true);
+            batchProgress.classList.remove('hidden');
+            updateProgress(0, "正在解析總覽頁...");
+
+            try {
+                // 1. 抓取總覽頁並解析網址
+                const overviewRes = await callGas({ action: "parseOverview", url: overviewUrl });
+                if (overviewRes.status !== "OverviewData") throw new Error(overviewRes.message);
+                
+                let items = overviewRes.data;
+                if (!items || items.length === 0) throw new Error("未在頁面中找到標案資料");
+
+                // 2. 限制前 5 筆
+                items = items.slice(0, 5);
+                updateProgress(10, `找到 ${items.length} 筆標案，正在比對重複...`);
+
+                // 3. 預先排除重複 (節省 API 額度)
+                const checkRes = await callGas({ action: "checkDuplicates", items: items });
+                const isDuplicate = checkRes.data;
+                
+                const newItems = items.filter((_, i) => !isDuplicate[i]);
+                const duplicateCount = items.length - newItems.length;
+
+                if (newItems.length === 0) {
+                    showResult("批次完成", `這 5 筆資料都已經存過囉！(略過 ${duplicateCount} 筆)`, false);
+                    updateProgress(100, "任務結束");
+                    return;
+                }
+
+                updateProgress(20, `準備抓取 ${newItems.length} 筆新資料 (略過 ${duplicateCount} 筆重複)...`);
+
+                // 4. 逐一抓取 (間隔 10 秒)
+                for (let i = 0; i < newItems.length; i++) {
+                    const item = newItems[i];
+                    updateProgress(20 + ((i + 1) / newItems.length) * 70, `正在抓取 (${i + 1}/${newItems.length}): ${item.name}`);
+                    
+                    const res = await callGas({ url: item.url });
+                    
+                    if (res.status === "Success") {
+                        addLog(item.url, "成功 (批次)");
+                        sessionTotal++;
+                        countTotal.innerText = sessionTotal;
+                        updateQuotaUI(res.quotas || res.data?.quotas);
+                    } else {
+                        addLog(item.url, `失敗: ${res.message}`);
+                    }
+
+                    // 如果不是最後一筆，隨機等待 10 秒
+                    if (i < newItems.length - 1) {
+                        for (let sec = 10; sec > 0; sec--) {
+                            updateProgress(20 + ((i + 1) / newItems.length) * 70, `等待冷卻中... ${sec}秒 (${i + 1}/${newItems.length} 已完成)`);
+                            await new Promise(r => setTimeout(r, 1000));
+                        }
+                    }
+                }
+
+                showResult("批次完成", `成功處理 ${newItems.length} 筆標案，略過 ${duplicateCount} 筆重複。`, false);
+                updateProgress(100, "全部完成！");
+
+            } catch (error) {
+                console.error(error);
+                showResult("批次失敗", error.message, true);
+            } finally {
+                setLoading(false);
+                fetchQuotas();
+            }
+        });
+
+        async function callGas(params) {
+            const response = await fetch(WEB_APP_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify(params)
+            });
+            return await response.json();
+        }
+
+        function updateProgress(percent, text) {
+            progressFill.style.width = percent + '%';
+            progressInfo.innerText = text;
         }
 
         // 初始化
