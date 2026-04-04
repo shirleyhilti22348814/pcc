@@ -3,121 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>招標資料自動化工具 | Bidding Data Scraper</title>
+    <title>HILTI 招標資料採集中心</title>
     <link rel="stylesheet" href="index.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="bg-blob blob-1"></div>
-    <div class="bg-blob blob-2"></div>
+    <div class="background-decor blur-1"></div>
+    <div class="background-decor blur-2"></div>
 
     <div class="container">
-        <header>
-            <h1>招標資料採集中心</h1>
+        <header class="header animate__animated animate__fadeInDown">
+            <h1 class="glow-text">招標資料採集中心</h1>
             <p class="subtitle">輸入招標網址，自動代入 Google Sheets 欄位</p>
         </header>
 
-        <section class="form-section">
+        <main class="main-content glass-card animate__animated animate__fadeInUp">
             <div class="input-group">
-                <label for="pcc-url">標案公告詳細網址 (QueryAtmAwardDetail)</label>
-                <input type="url" id="pcc-url" placeholder="https://web.pcc.gov.tw/tps/..." required>
+                <label for="url-input">標案公告詳細網址 (QueryAtmAwardDetail)</label>
+                <input type="text" id="url-input" placeholder="https://web.pcc.gov.tw/tps/..." autocomplete="off">
             </div>
 
-            <div class="actions">
-                <button id="fetch-btn" type="button">
-                    <span class="btn-text"><i class="fas fa-cloud-download-alt"></i> 抓取並存檔</span>
-                    <div class="loader" id="loader"></div>
-                </button>
+            <button id="fetch-btn" class="primary-btn">
+                <i class="fas fa-cloud-download-alt"></i> 抓取並存檔
+            </button>
+
+            <div id="status-display" class="status-box hidden">
+                <div class="status-icon"><i id="status-icon-inner" class="fas fa-check-circle"></i></div>
+                <div class="status-content">
+                    <h3 id="msg-title">存進去了！</h3>
+                    <p id="msg-details">資料已成功傳送至雲端試算表。</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- 數據儀表板 -->
+        <section class="stats-grid animate__animated animate__fadeInUp animate__delay-1s">
+            <div class="stat-card glass-card">
+                <i class="fas fa-file-invoice stat-icon"></i>
+                <div id="count-total" class="stat-value">0</div>
+                <div class="stat-label">今日抓取筆數</div>
+            </div>
+            <div class="stat-card glass-card">
+                <i class="fas fa-microchip stat-icon"></i>
+                <div id="quota-ws" class="stat-value">---</div>
+                <div class="stat-label">WebScraping.AI 額度</div>
+            </div>
+            <div class="stat-card glass-card">
+                <i class="fas fa-rocket stat-icon"></i>
+                <div id="quota-sa" class="stat-value">---</div>
+                <div class="stat-label">ScrapingAnt</div>
+            </div>
+            <div class="stat-card glass-card">
+                <i class="fas fa-shield-alt stat-icon"></i>
+                <div id="quota-sd" class="stat-value">---</div>
+                <div class="stat-label">scrape.do</div>
             </div>
         </section>
 
-        <div id="result-message" class="result-card">
-            <div class="result-title" id="msg-title"></div>
-            <div class="result-details" id="msg-details"></div>
-        </div>
-
-        <div class="stats">
-            <div class="stat-box">
-                <i class="fas fa-file-invoice"></i>
-                <div class="stat-value" id="count-total">0</div>
-                <div class="stat-label">今日抓取筆數</div>
-            </div>
-            <div class="stat-box">
-                <i class="fas fa-check-circle"></i>
-                <div class="stat-value" id="count-success">100%</div>
-                <div class="stat-label">抓取成功率</div>
-            </div>
-        </div>
-
-        <section class="log-section">
+        <!-- 最近活動 -->
+        <section class="log-section glass-card animate__animated animate__fadeInUp animate__delay-2s">
             <div class="result-title"><i class="fas fa-history"></i> 最近活動</div>
             <div id="log-list">
                 <!-- Log items will appear here -->
-                <div class="stat-item">
-                    <span class="stat-label">今日抓取</span>
-                    <span id="count-total" class="stat-value">0</span>
-                </div>
-            </div>
-
-            <!-- API 額度儀表板 -->
-            <div class="quota-panel">
-                <div class="quota-item">
-                    <span class="quota-name">WebScraping.AI</span>
-                    <span id="quota-ws" class="quota-value">載入中...</span>
-                </div>
-                <div class="quota-item">
-                    <span class="quota-name">ScrapingAnt</span>
-                    <span id="quota-sa" class="quota-value">載入中...</span>
-                </div>
+                <div class="log-loading-placeholder" style="color:var(--text-muted); padding: 1rem; text-align: center;">系統就緒中...</div>
             </div>
         </section>
-
-        <footer>
-            <p>&copy; 2026 Procurement Automation Tool | Designed for Efficiency</p>
-        </footer>
     </div>
 
     <script>
         // --- 設定區 ---
-        // 請在此填入您的 Google Apps Script 網頁應用程式網址
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwbnZu4OewTEeE4yekBkhcCpCWtXz5bjAUGSMskURqPQQRogwx6nlOeZUiMn_tQVd7f/exec";
         // -------------
 
         const fetchBtn = document.getElementById('fetch-btn');
-        const urlInput = document.getElementById('pcc-url');
-        const loader = document.getElementById('loader');
-        const btnText = fetchBtn.querySelector('.btn-text');
-        const resultMsg = document.getElementById('result-message');
-        const msgTitle = document.getElementById('msg-title');
-        const msgDetails = document.getElementById('msg-details');
-        const logList = document.getElementById('log-list');
+        const urlInput = document.getElementById('url-input');
         const countTotal = document.getElementById('count-total');
         const quotaWs = document.getElementById('quota-ws');
         const quotaSa = document.getElementById('quota-sa');
+        const quotaSd = document.getElementById('quota-sd');
+        const logList = document.getElementById('log-list');
+        const statusBox = document.getElementById('status-display');
+        const msgTitle = document.getElementById('msg-title');
+        const msgDetails = document.getElementById('msg-details');
 
         let sessionTotal = 0;
 
         fetchBtn.addEventListener('click', async () => {
             const url = urlInput.value.trim();
-            if (!url) {
-                showResult("請輸入網址", "網址欄位不能為空", true);
-                return;
-            }
-
-            if (WEB_APP_URL === "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE") {
-                showResult("設定未完成", "請先部署 Google Apps Script 並在 HTML 中填入正確網址", true);
-                return;
-            }
+            if (!url) return showResult("錯誤", "請輸入完整的招標網址", true);
 
             setLoading(true);
-            resultMsg.style.display = 'none';
+            showResult("處理中...", "正在透過多重代理進行深度抓取，請稍候。", false);
 
             try {
-                // 發送請求到 GAS
                 const response = await fetch(WEB_APP_URL, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' }, // GAS doPost 接收 JSON 建議用 text/plain 以避免部分 CORS 問題
+                    headers: { 'Content-Type': 'text/plain' },
                     body: JSON.stringify({ url: url })
                 });
 
@@ -125,7 +107,7 @@
                 
                 if (result.status === "Success") {
                     showResult("存進去了！", result.message, false);
-                    updateQuotaUI(result.data.quotas);
+                    updateQuotaUI(result.quotas || (result.data ? result.data.quotas : null));
                     addLog(url, "成功存儲");
                     sessionTotal++;
                     countTotal.innerText = sessionTotal;
@@ -136,21 +118,20 @@
                 } else if (result.status === "Captcha") {
                     showResult("遇到防護牆", result.message, true);
                     addLog(url, "需手動驗證");
-                    // 已移除自動開啟新視窗
                 } else {
-                    showResult("抓取錯誤", result.message, true);
-                    addLog(url, "系統出錯");
+                    showResult("抓取失敗", result.message, true);
+                    addLog(url, "失敗");
                 }
 
             } catch (error) {
                 console.error(error);
-                showResult("連線失敗", "請確認 GAS 已正確部署且為「任何人」均可存取。", true);
+                showResult("連線失敗", "請確認是否已上傳 GitHub 且 GAS 部署正確。", true);
             } finally {
                 setLoading(false);
+                fetchQuotas(); // 每次抓完刷新額度
             }
         });
 
-        // 查詢並更新額度 UI
         async function fetchQuotas() {
             try {
                 const response = await fetch(WEB_APP_URL, {
@@ -168,49 +149,46 @@
         }
 
         function updateQuotaUI(data) {
-            if (!data) {
-                quotaWs.innerText = "Error";
-                quotaSa.innerText = "Error";
-                return;
-            }
+            if (!data) return;
             quotaWs.innerText = data.webscraping_ai ?? "N/A";
             quotaSa.innerText = data.scrapingant ?? "N/A";
+            quotaSd.innerText = data.scrapedo ?? "N/A";
+        }
+
+        function showResult(title, details, isError) {
+            statusBox.classList.remove('hidden', 'status-error', 'status-success');
+            statusBox.classList.add(isError ? 'status-error' : 'status-success');
+            msgTitle.innerText = title;
+            msgDetails.innerText = details;
+            
+            const icon = document.getElementById('status-icon-inner');
+            icon.className = isError ? 'fas fa-exclamation-triangle' : 'fas fa-check-circle';
+        }
+
+        function setLoading(isLoading) {
+            fetchBtn.disabled = isLoading;
+            fetchBtn.innerHTML = isLoading ? '<i class="fas fa-spinner fa-spin"></i> 處理中...' : '<i class="fas fa-cloud-download-alt"></i> 抓取並存檔';
+        }
+
+        function addLog(url, status) {
+            const time = new Date().toLocaleTimeString();
+            const logItem = document.createElement('div');
+            logItem.className = 'log-item';
+            logItem.innerHTML = `
+                <div class="log-info">
+                    <div class="log-url">${url.length > 50 ? url.substring(0, 50) + '...' : url}</div>
+                    <div class="log-time">${time}</div>
+                </div>
+                <div class="log-status ${status.includes('成功') ? 'success' : 'error'}">${status}</div>
+            `;
+            if (logList.querySelector('.log-loading-placeholder')) {
+                logList.innerHTML = '';
+            }
+            logList.insertBefore(logItem, logList.firstChild);
         }
 
         // 初始化
         fetchQuotas();
-
-        function setLoading(isLoading) {
-            fetchBtn.disabled = isLoading;
-            if (isLoading) {
-                loader.style.display = 'block';
-                btnText.style.opacity = '0.3';
-            } else {
-                loader.style.display = 'none';
-                btnText.style.opacity = '1';
-            }
-        }
-
-        function showResult(title, details, isError) {
-            resultMsg.style.display = 'block';
-            resultMsg.className = isError ? 'result-card error' : 'result-card';
-            msgTitle.innerHTML = `<i class="fas fa-${isError ? 'exclamation-circle' : 'check-circle'}"></i> ${title}`;
-            msgDetails.innerText = details;
-        }
-
-        function addLog(url, status) {
-            const shortUrl = url.length > 50 ? url.substring(0, 50) + "..." : url;
-            const item = document.createElement('div');
-            item.className = 'log-item';
-            item.innerHTML = `
-                <span class="url-text">${shortUrl}</span>
-                <span style="color:${status.includes('成功') ? 'var(--success)' : 'var(--error)'}">${status}</span>
-            `;
-            logList.prepend(item);
-            if (logList.children.length > 5) {
-                logList.removeChild(logList.lastChild);
-            }
-        }
     </script>
 </body>
 </html>
