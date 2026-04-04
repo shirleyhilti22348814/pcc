@@ -168,7 +168,11 @@
         }
 
         function updateQuotaUI(data) {
-            if (!data) return;
+            if (!data) {
+                quotaWs.innerText = "Error";
+                quotaSa.innerText = "Error";
+                return;
+            }
             quotaWs.innerText = data.webscraping_ai ?? "N/A";
             quotaSa.innerText = data.scrapingant ?? "N/A";
         }
