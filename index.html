@@ -47,17 +47,29 @@
             <div class="stat-card glass-card">
                 <i class="fas fa-microchip stat-icon"></i>
                 <div id="quota-ws" class="stat-value">---</div>
-                <div class="stat-label">WebScraping.AI 額度</div>
+                <div class="stat-label">WebScraping.AI</div>
+                <div class="stat-detail">
+                    <span>總額: <span id="total-ws">---</span></span>
+                    <span>重置: <span id="reset-ws" class="reset-time">---</span></span>
+                </div>
             </div>
             <div class="stat-card glass-card">
                 <i class="fas fa-rocket stat-icon"></i>
                 <div id="quota-sa" class="stat-value">---</div>
                 <div class="stat-label">ScrapingAnt</div>
+                <div class="stat-detail">
+                    <span>總額: <span id="total-sa">---</span></span>
+                    <span>重置: <span id="reset-sa" class="reset-time">---</span></span>
+                </div>
             </div>
             <div class="stat-card glass-card">
                 <i class="fas fa-shield-alt stat-icon"></i>
                 <div id="quota-sd" class="stat-value">---</div>
                 <div class="stat-label">scrape.do</div>
+                <div class="stat-detail">
+                    <span>總額: <span id="total-sd">---</span></span>
+                    <span>重置: <span id="reset-sd" class="reset-time">---</span></span>
+                </div>
             </div>
         </section>
 
@@ -150,9 +162,27 @@
 
         function updateQuotaUI(data) {
             if (!data) return;
-            quotaWs.innerText = data.webscraping_ai ?? "N/A";
-            quotaSa.innerText = data.scrapingant ?? "N/A";
-            quotaSd.innerText = data.scrapedo ?? "N/A";
+            
+            // WebScraping.AI
+            if (data.webscraping_ai) {
+                quotaWs.innerText = data.webscraping_ai.remain ?? "N/A";
+                document.getElementById('total-ws').innerText = data.webscraping_ai.total ?? "N/A";
+                document.getElementById('reset-ws').innerText = data.webscraping_ai.reset ?? "N/A";
+            }
+            
+            // ScrapingAnt
+            if (data.scrapingant) {
+                quotaSa.innerText = data.scrapingant.remain ?? "N/A";
+                document.getElementById('total-sa').innerText = data.scrapingant.total ?? "N/A";
+                document.getElementById('reset-sa').innerText = data.scrapingant.reset ?? "N/A";
+            }
+            
+            // scrape.do
+            if (data.scrapedo) {
+                quotaSd.innerText = data.scrapedo.remain ?? "N/A";
+                document.getElementById('total-sd').innerText = data.scrapedo.total ?? "N/A";
+                document.getElementById('reset-sd').innerText = data.scrapedo.reset ?? "N/A";
+            }
         }
 
         function showResult(title, details, isError) {

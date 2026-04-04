@@ -12,10 +12,11 @@
 
 ## 📅 版本更迭紀錄
 
-### [2026-04-05] - 三核心 API 究極版 (Current)
-- **[重要]** 整合並排序三大 API 服務（WebScraping.AI, ScrapingAnt, scrape.do）。
-- **[新增]** 同步三家 API 配額即時查詢面板。
-- **[優化]** 全列內容比對防排重算法 V15 穩定版。
+### [2026-04-05] - 三核心 API 究極版 V16 (Current)
+- **[重要]** 修復三家 API (WebScraping.AI, ScrapingAnt, scrape.do) 額度查詢欄位不對齊問題。
+- **[新增]** 即時顯示三大 API 的 **「總額度」** 與 **「重置日期時間」** (儀表板全功能)。
+- **[優化]** UI 卡片排版，自動隱藏/縮合長標題，確保在行動端也能完美顯示細節資訊。
+- **[穩定]** 強化 GAS 後端錯誤處理機制，防止 API 呼叫失敗時中斷正常流程。
 
 ---
 *Developed with ❤️ by Antigravity AI for HILTI.*
