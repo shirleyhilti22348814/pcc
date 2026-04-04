@@ -39,9 +39,14 @@
                     <label for="batch-url-input">總覽頁搜尋結果網址 (readTenderAgent)</label>
                     <input type="text" id="batch-url-input" placeholder="https://web.pcc.gov.tw/prkms/..." autocomplete="off">
                 </div>
-                <button id="batch-btn" class="primary-btn">
-                    <i class="fas fa-layer-group"></i> 開始批次排查與抓取
-                </button>
+                <div class="batch-actions">
+                    <button id="batch-btn" class="primary-btn">
+                        <i class="fas fa-layer-group"></i> 開始批次排查與抓取
+                    </button>
+                    <button id="stop-btn" class="secondary-btn hidden" style="background: var(--error); flex: 0.4;">
+                        <i class="fas fa-stop-circle"></i> 停止
+                    </button>
+                </div>
                 <div id="batch-progress" class="batch-status-bar hidden">
                     <div class="progress-info">正在準備批次任務...</div>
                     <div class="progress-track"><div id="progress-fill" class="progress-fill"></div></div>
@@ -121,6 +126,7 @@
 
         // 批次相關
         const batchBtn = document.getElementById('batch-btn');
+        const stopBtn = document.getElementById('stop-btn');
         const batchUrlInput = document.getElementById('batch-url-input');
         const batchProgress = document.getElementById('batch-progress');
         const progressFill = document.getElementById('progress-fill');
@@ -129,6 +135,14 @@
         const batchUi = document.getElementById('batch-ui');
         const modeSingle = document.getElementById('mode-single');
         const modeBatch = document.getElementById('mode-batch');
+
+        let isBatchStopped = false;
+
+        stopBtn.addEventListener('click', () => {
+            isBatchStopped = true;
+            stopBtn.disabled = true;
+            progressInfo.innerText = "正在停止任務...";
+        });
 
         modeSingle.addEventListener('click', () => {
             modeSingle.classList.add('active');
@@ -268,6 +282,9 @@
             if (!overviewUrl) return showResult("錯誤", "請輸入總覽頁網址", true);
 
             setLoading(true);
+            isBatchStopped = false;
+            stopBtn.classList.remove('hidden');
+            stopBtn.disabled = false;
             batchProgress.classList.remove('hidden');
             updateProgress(0, "正在解析總覽頁...");
 
@@ -300,6 +317,12 @@
 
                 // 4. 逐一抓取 (間隔 10 秒)
                 for (let i = 0; i < newItems.length; i++) {
+                    if (isBatchStopped) {
+                        showResult("任務手動停止", `已處理 ${i} 筆，剩餘 ${newItems.length - i} 筆已取消。`, false);
+                        updateProgress(100, "任務已停止");
+                        return;
+                    }
+                    
                     const item = newItems[i];
                     updateProgress(20 + ((i + 1) / newItems.length) * 70, `正在抓取 (${i + 1}/${newItems.length}): ${item.name}`);
                     
@@ -317,20 +340,26 @@
                     // 如果不是最後一筆，隨機等待 10 秒
                     if (i < newItems.length - 1) {
                         for (let sec = 10; sec > 0; sec--) {
+                            if (isBatchStopped) break;
                             updateProgress(20 + ((i + 1) / newItems.length) * 70, `等待冷卻中... ${sec}秒 (${i + 1}/${newItems.length} 已完成)`);
                             await new Promise(r => setTimeout(r, 1000));
                         }
                     }
                 }
-
-                showResult("批次完成", `成功處理 ${newItems.length} 筆標案，略過 ${duplicateCount} 筆重複。`, false);
-                updateProgress(100, "全部完成！");
+                
+                if (isBatchStopped) {
+                    showResult("任務手動停止", "執行中斷，已完成部分抓取。", false);
+                } else {
+                    showResult("批次完成", `成功處理 ${newItems.length} 筆標案，略過 ${duplicateCount} 筆重複。`, false);
+                    updateProgress(100, "全部完成！");
+                }
 
             } catch (error) {
                 console.error(error);
                 showResult("批次失敗", error.message, true);
             } finally {
                 setLoading(false);
+                stopBtn.classList.add('hidden');
                 fetchQuotas();
             }
         });
