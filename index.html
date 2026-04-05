@@ -57,19 +57,37 @@
                     <div class="stat-card glass-card">
                         <i class="fas fa-microchip stat-icon"></i>
                         <div id="quota-ws" class="stat-value">---</div>
-                        <div class="stat-label">WebScraping.AI</div>
+                        <div class="stat-label">WebScraping.AI (1)</div>
                         <div class="stat-detail">
                             <span>總額: <span id="total-ws">---</span></span>
                             <span>重置: <span id="reset-ws" class="reset-time">---</span></span>
                         </div>
                     </div>
                     <div class="stat-card glass-card">
+                        <i class="fas fa-microchip stat-icon"></i>
+                        <div id="quota-ws-2" class="stat-value">---</div>
+                        <div class="stat-label">WebScraping.AI (2)</div>
+                        <div class="stat-detail">
+                            <span>總額: <span id="total-ws-2">---</span></span>
+                            <span>重置: <span id="reset-ws-2" class="reset-time">---</span></span>
+                        </div>
+                    </div>
+                    <div class="stat-card glass-card">
                         <i class="fas fa-rocket stat-icon"></i>
                         <div id="quota-sa" class="stat-value">---</div>
-                        <div class="stat-label">ScrapingAnt</div>
+                        <div class="stat-label">ScrapingAnt (1)</div>
                         <div class="stat-detail">
                             <span>總額: <span id="total-sa">---</span></span>
                             <span>重置: <span id="reset-sa" class="reset-time">---</span></span>
+                        </div>
+                    </div>
+                    <div class="stat-card glass-card">
+                        <i class="fas fa-rocket stat-icon"></i>
+                        <div id="quota-sa-2" class="stat-value">---</div>
+                        <div class="stat-label">ScrapingAnt (2)</div>
+                        <div class="stat-detail">
+                            <span>總額: <span id="total-sa-2">---</span></span>
+                            <span>重置: <span id="reset-sa-2" class="reset-time">---</span></span>
                         </div>
                     </div>
                     <div class="stat-card glass-card">
@@ -106,7 +124,9 @@
         const urlInput = document.getElementById('url-input');
         const countTotal = document.getElementById('count-total');
         const quotaWs = document.getElementById('quota-ws');
+        const quotaWs2 = document.getElementById('quota-ws-2');
         const quotaSa = document.getElementById('quota-sa');
+        const quotaSa2 = document.getElementById('quota-sa-2');
         const quotaSd = document.getElementById('quota-sd');
         const logList = document.getElementById('log-list');
         const statusBox = document.getElementById('status-display');
@@ -277,6 +297,13 @@
                 document.getElementById('total-ws').innerText = data.webscraping_ai.total ?? "N/A";
                 document.getElementById('reset-ws').innerText = data.webscraping_ai.reset ?? "N/A";
             }
+
+            // WebScraping.AI 2
+            if (data.webscraping_ai_2) {
+                quotaWs2.innerText = data.webscraping_ai_2.remain ?? "N/A";
+                document.getElementById('total-ws-2').innerText = data.webscraping_ai_2.total ?? "N/A";
+                document.getElementById('reset-ws-2').innerText = data.webscraping_ai_2.reset ?? "N/A";
+            }
             
             // ScrapingAnt
             if (data.scrapingant) {
@@ -285,6 +312,13 @@
                 document.getElementById('reset-sa').innerText = data.scrapingant.reset ?? "N/A";
             }
             
+            // ScrapingAnt 2
+            if (data.scrapingant_2) {
+                quotaSa2.innerText = data.scrapingant_2.remain ?? "N/A";
+                document.getElementById('total-sa-2').innerText = data.scrapingant_2.total ?? "N/A";
+                document.getElementById('reset-sa-2').innerText = data.scrapingant_2.reset ?? "N/A";
+            }
+
             // scrape.do
             if (data.scrapedo) {
                 quotaSd.innerText = data.scrapedo.remain ?? "N/A";
