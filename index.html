@@ -21,11 +21,11 @@
         <main class="main-content glass-card animate__animated animate__fadeInUp">
             <div id="single-ui">
                 <div class="input-group">
-                    <label for="url-input">標案公告詳細網址</label>
-                    <input type="text" id="url-input" placeholder="請貼上: https://web.pcc.gov.tw/tps/... 或 https://web.pcc.gov.tw/prkms/..." autocomplete="off">
+                    <label for="url-input">標案公告詳細網址 (支援多筆一起貼上換行)</label>
+                    <textarea id="url-input" rows="5" placeholder="請將剛才書籤複製下來的多筆網址直接貼在這裡...&#10;https://web.pcc.gov.tw/...&#10;https://web.pcc.gov.tw/..." autocomplete="off"></textarea>
                 </div>
                 <button id="fetch-btn" class="primary-btn">
-                    <i class="fas fa-cloud-download-alt"></i> 抓取並存檔
+                    <i class="fas fa-rocket"></i> 開始抓取
                 </button>
             </div>
 
@@ -101,48 +101,90 @@
         const msgDetails = document.getElementById('msg-details');
 
         let sessionTotal = 0;
+        let isFetching = false;
+        let isStopped = false;
 
         fetchBtn.addEventListener('click', async () => {
-            const url = urlInput.value.trim();
-            if (!url) return showResult("錯誤", "請輸入完整的招標網址", true);
+            if (isFetching) {
+                isStopped = true;
+                return;
+            }
 
-            setLoading(true);
-            showResult("處理中...", "正在透過多重代理進行深度抓取，請稍候。", false);
+            const lines = urlInput.value.split('\n').map(l => l.trim()).filter(l => l && l.startsWith('http'));
+            if (lines.length === 0) return showResult("錯誤", "請貼上有效的標案網址(需包含 http:// 或是 https://)", true);
 
-            try {
-                const response = await fetch(WEB_APP_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify({ url: url })
-                });
+            isFetching = true;
+            isStopped = false;
+            fetchBtn.innerHTML = '<i class="fas fa-stop-circle"></i> 停止抓取';
+            fetchBtn.style.background = 'linear-gradient(135deg, #ff1744 0%, #aa00ff 100%)';
 
-                const result = await response.json();
-                
-                if (result.status === "Success") {
-                    showResult("存進去了！", result.message, false);
-                    updateQuotaUI(result.quotas || (result.data ? result.data.quotas : null));
-                    addLog(url, "成功存儲");
-                    sessionTotal++;
-                    countTotal.innerText = sessionTotal;
-                    urlInput.value = "";
-                } else if (result.status === "Duplicate") {
-                    showResult("重複警告", result.message, true);
-                    addLog(url, "重複略過");
-                } else if (result.status === "Captcha") {
-                    showResult("遇到防護牆", result.message, true);
-                    addLog(url, "需手動驗證");
-                } else {
-                    showResult("抓取失敗", result.message, true);
-                    addLog(url, "失敗");
+            let successCount = 0;
+            let dupCount = 0;
+            let failCount = 0;
+
+            for (let i = 0; i < lines.length; i++) {
+                if (isStopped) {
+                    showResult("已手動停止", `任務中斷。成功:${successCount} 筆，重複:${dupCount} 筆`, false);
+                    break;
                 }
 
-            } catch (error) {
-                console.error(error);
-                showResult("連線失敗", "請確認是否已上傳 GitHub 且 GAS 部署正確。", true);
-            } finally {
-                setLoading(false);
-                fetchQuotas(); // 每次抓完刷新額度
+                const url = lines[i];
+                showResult(`批次處理中 (${i+1}/${lines.length})`, `正在抓取：${url}`, false);
+
+                try {
+                    const response = await fetch(WEB_APP_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain' },
+                        body: JSON.stringify({ url: url })
+                    });
+                    const result = await response.json();
+                    
+                    if (result.status === "Success") {
+                        showResult("進去了！", result.message, false);
+                        addLog(url, "成功");
+                        sessionTotal++;
+                        successCount++;
+                        countTotal.innerText = sessionTotal;
+                    } else if (result.status === "Duplicate") {
+                        showResult("重複略過", result.message, true);
+                        addLog(url, "重複略過");
+                        dupCount++;
+                    } else if (result.status === "Captcha") {
+                        showResult("防護牆", result.message, true);
+                        addLog(url, "遇到驗證");
+                        failCount++;
+                    } else {
+                        showResult("抓取失敗", result.message, true);
+                        addLog(url, "失敗");
+                        failCount++;
+                    }
+                    if(result.quotas || (result.data && result.data.quotas)) {
+                        updateQuotaUI(result.quotas || result.data.quotas);
+                    }
+                } catch (error) {
+                    console.error(error);
+                    addLog(url, "連線錯誤");
+                    failCount++;
+                }
+
+                if (i < lines.length - 1 && !isStopped) {
+                    for (let sec = 6; sec > 0; sec--) {
+                        if (isStopped) break;
+                        showResult(`冷卻中 (${i+1}/${lines.length})`, `避免被封鎖，${sec} 秒後抓取下一筆...`, false);
+                        await new Promise(r => setTimeout(r, 1000));
+                    }
+                }
             }
+
+            if (!isStopped) {
+                showResult("任務完成", `共 ${lines.length} 筆！成功:${successCount}，重複:${dupCount}，失敗待查:${failCount}`, failCount > 0);
+                urlInput.value = ""; // 清空輸入框
+            }
+
+            isFetching = false;
+            fetchBtn.innerHTML = '<i class="fas fa-rocket"></i> 開始抓取';
+            fetchBtn.style.background = 'linear-gradient(135deg, #7c4dff 0%, #448aff 100%)';
+            fetchQuotas(); // 任務結束刷新額度
         });
 
         async function fetchQuotas() {
@@ -186,22 +228,8 @@
             }
         }
 
+// 狀態更新函式已直接被整合，移除不需要的 setLoading
         function showResult(title, details, isError) {
-            statusBox.classList.remove('hidden', 'status-error', 'status-success');
-            statusBox.classList.add(isError ? 'status-error' : 'status-success');
-            msgTitle.innerText = title;
-            msgDetails.innerText = details;
-            
-            const icon = document.getElementById('status-icon-inner');
-            icon.className = isError ? 'fas fa-exclamation-triangle' : 'fas fa-check-circle';
-        }
-
-        function setLoading(isLoading) {
-            fetchBtn.disabled = isLoading;
-            fetchBtn.innerHTML = isLoading ? '<i class="fas fa-spinner fa-spin"></i> 處理中...' : '<i class="fas fa-cloud-download-alt"></i> 抓取並存檔';
-        }
-
-        function addLog(url, status) {
             const time = new Date().toLocaleTimeString();
             const logItem = document.createElement('div');
             logItem.className = 'log-item';
