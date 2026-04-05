@@ -140,6 +140,24 @@
             let dupCount = 0;
             let failCount = 0;
 
+            // --- 第一層防護：極速查閱資料庫網址 ---
+            updateProgress(2, `正在進行第一層防護：極速免費過濾已存網址...`);
+            let isDuplicateArray = [];
+            try {
+                const checkRes = await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({ action: "preCheckUrls", urls: lines })
+                });
+                const checkJson = await checkRes.json();
+                if (checkJson.status === "PreCheckDone") {
+                    isDuplicateArray = checkJson.data;
+                }
+            } catch (e) {
+                console.error("預先排查失敗", e);
+            }
+            // ---------------------------------
+
             for (let i = 0; i < lines.length; i++) {
                 if (isStopped) {
                     showResult("已手動停止", `任務中斷。成功:${successCount} 筆，重複:${dupCount} 筆`, false);
@@ -153,6 +171,17 @@
                 showResult(`正在抓取第 ${i+1} 筆`, `目標：${url}`, false);
                 updateProgress(progressPercent, `<strong>目前進度： ( ${i+1} / ${lines.length} ) 筆</strong> <br><small style="opacity:0.7">正在連線擷取資料...</small>`);
 
+                // 檢查第一層防護結果
+                if (isDuplicateArray[i]) {
+                    showResult("秒殺略過 (第一層防護)", "發現這份網址早就在試算表裡囉！", true);
+                    addLog(url, "略過：查無須扣費");
+                    dupCount++;
+                    
+                    progressPercent = ((i + 1) / lines.length) * 100;
+                    updateProgress(progressPercent, `<strong>目前進度： ( ${i+1} / ${lines.length} ) 筆</strong> <br><small style="opacity:0.7">免費跳過第 ${i+1} 筆</small>`);
+                    continue; // 💥 直接跳過這次迴圈的後續動作，省下一次 API 與 6 秒等待！
+                }
+
                 try {
                     const response = await fetch(WEB_APP_URL, {
                         method: 'POST',
@@ -163,7 +192,9 @@
                     
                     if (result.status === "Success") {
                         showResult("進去了！", result.message, false);
-                        addLog(url, "成功存儲");
+                        // 將後台傳來的 "由 XXX (計費) 抓取成功！" 縮減保留關鍵字顯示在 Log 區
+                        let logMsg = result.message.replace("由 ", "").replace(" 抓取成功！", "");
+                        addLog(url, "成功：" + logMsg);
                         sessionTotal++;
                         successCount++;
                         countTotal.innerText = sessionTotal;
