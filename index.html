@@ -225,7 +225,7 @@
                 updateProgress(progressPercent, `<strong>目前進度： ( ${i+1} / ${lines.length} ) 筆</strong> <br><small style="opacity:0.7">第 ${i+1} 筆處理已完成</small>`);
 
                 if (i < lines.length - 1 && !isStopped) {
-                    for (let sec = 6; sec > 0; sec--) {
+                    for (let sec = 10; sec > 0; sec--) {
                         if (isStopped) break;
                         showResult(`冷卻中 (${i+1}/${lines.length})`, `為了躲避防護牆，${sec} 秒後抓取下一筆...`, false);
                         await new Promise(r => setTimeout(r, 1000));
