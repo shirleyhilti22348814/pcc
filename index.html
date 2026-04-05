@@ -73,6 +73,15 @@
                         </div>
                     </div>
                     <div class="stat-card glass-card">
+                        <i class="fas fa-microchip stat-icon"></i>
+                        <div id="quota-ws-3" class="stat-value">---</div>
+                        <div class="stat-label">WebScraping.AI (3)</div>
+                        <div class="stat-detail">
+                            <span>總額: <span id="total-ws-3">---</span></span>
+                            <span>重置: <span id="reset-ws-3" class="reset-time">---</span></span>
+                        </div>
+                    </div>
+                    <div class="stat-card glass-card">
                         <i class="fas fa-rocket stat-icon"></i>
                         <div id="quota-sa" class="stat-value">---</div>
                         <div class="stat-label">ScrapingAnt (1)</div>
@@ -88,6 +97,15 @@
                         <div class="stat-detail">
                             <span>總額: <span id="total-sa-2">---</span></span>
                             <span>重置: <span id="reset-sa-2" class="reset-time">---</span></span>
+                        </div>
+                    </div>
+                    <div class="stat-card glass-card">
+                        <i class="fas fa-rocket stat-icon"></i>
+                        <div id="quota-sa-3" class="stat-value">---</div>
+                        <div class="stat-label">ScrapingAnt (3)</div>
+                        <div class="stat-detail">
+                            <span>總額: <span id="total-sa-3">---</span></span>
+                            <span>重置: <span id="reset-sa-3" class="reset-time">---</span></span>
                         </div>
                     </div>
                     <div class="stat-card glass-card">
@@ -125,8 +143,10 @@
         const countTotal = document.getElementById('count-total');
         const quotaWs = document.getElementById('quota-ws');
         const quotaWs2 = document.getElementById('quota-ws-2');
+        const quotaWs3 = document.getElementById('quota-ws-3');
         const quotaSa = document.getElementById('quota-sa');
         const quotaSa2 = document.getElementById('quota-sa-2');
+        const quotaSa3 = document.getElementById('quota-sa-3');
         const quotaSd = document.getElementById('quota-sd');
         const logList = document.getElementById('log-list');
         const statusBox = document.getElementById('status-display');
@@ -304,6 +324,13 @@
                 document.getElementById('total-ws-2').innerText = data.webscraping_ai_2.total ?? "N/A";
                 document.getElementById('reset-ws-2').innerText = data.webscraping_ai_2.reset ?? "N/A";
             }
+
+            // WebScraping.AI 3
+            if (data.webscraping_ai_3) {
+                quotaWs3.innerText = data.webscraping_ai_3.remain ?? "N/A";
+                document.getElementById('total-ws-3').innerText = data.webscraping_ai_3.total ?? "N/A";
+                document.getElementById('reset-ws-3').innerText = data.webscraping_ai_3.reset ?? "N/A";
+            }
             
             // ScrapingAnt
             if (data.scrapingant) {
@@ -317,6 +344,13 @@
                 quotaSa2.innerText = data.scrapingant_2.remain ?? "N/A";
                 document.getElementById('total-sa-2').innerText = data.scrapingant_2.total ?? "N/A";
                 document.getElementById('reset-sa-2').innerText = data.scrapingant_2.reset ?? "N/A";
+            }
+
+            // ScrapingAnt 3
+            if (data.scrapingant_3) {
+                quotaSa3.innerText = data.scrapingant_3.remain ?? "N/A";
+                document.getElementById('total-sa-3').innerText = data.scrapingant_3.total ?? "N/A";
+                document.getElementById('reset-sa-3').innerText = data.scrapingant_3.reset ?? "N/A";
             }
 
             // scrape.do

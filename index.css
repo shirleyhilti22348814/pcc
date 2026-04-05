@@ -324,54 +324,55 @@ input[type="text"]:focus, textarea:focus {
 /* 數據儀表板樣式 */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.25rem;
-    margin-top: 1.5rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-top: 1rem;
     width: 100%;
 }
 
 @media (max-width: 992px) {
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
-        margin-top: 1.5rem;
+        margin-top: 1.25rem;
     }
 }
 
 @media (max-width: 480px) {
     .stats-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
     }
 }
 
 .stat-card {
     text-align: center;
-    padding: 1.25rem 0.5rem !important;
+    padding: 0.75rem 0.25rem !important;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.25rem;
 }
 
 .stat-icon {
-    font-size: 1.25rem;
+    font-size: 1rem;
     color: var(--accent);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
 }
 
 .stat-value {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 700;
     color: var(--text-primary);
-    margin-bottom: 0.15rem;
+    margin-bottom: 0.1rem;
 }
 
 .stat-label {
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     font-weight: 600;
     color: var(--text-muted);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
+    line-height: 1.1;
 }
 
 /* 額度細節樣式 */
