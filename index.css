@@ -71,9 +71,22 @@ body {
 
 .container {
     width: 100%;
-    max-width: 800px;
-    padding: 1rem;
+    max-width: 1400px;
+    padding: 1rem 2rem;
     margin: 0 auto;
+}
+
+.grid-layout {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+@media (max-width: 992px) {
+    .grid-layout {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 768px) {
@@ -300,14 +313,15 @@ input[type="text"]:focus, textarea:focus {
 /* 數據儀表板樣式 */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0.85rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
     margin-top: 1.5rem;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 992px) {
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
+        margin-top: 1.5rem;
     }
 }
 
@@ -323,7 +337,10 @@ input[type="text"]:focus, textarea:focus {
     padding: 1.25rem 0.75rem !important;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    aspect-ratio: 1 / 1;
 }
 
 .stat-icon {
@@ -348,13 +365,14 @@ input[type="text"]:focus, textarea:focus {
 
 /* 額度細節樣式 */
 .stat-detail {
-    margin-top: 0.5rem;
+    margin-top: 0.25rem;
     padding-top: 0.5rem;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
-    text-align: left;
+    gap: 0.25rem;
+    text-align: center;
+    width: 100%;
 }
 
 .stat-detail span {
