@@ -1,4 +1,4 @@
-![Last Updated](https://img.shields.io/badge/Last_Updated-2026--04--05-blue.svg?style=for-the-badge)
+![Last Updated](https://img.shields.io/badge/Last_Updated-2026--04--06-blue.svg?style=for-the-badge)
 ![API Status](https://img.shields.io/badge/API_Engine-Triple_Fallback-success.svg?style=for-the-badge)
 ![Sheet Logic](https://img.shields.io/badge/Sheet_Logic-XLOOKUP-orange.svg?style=for-the-badge)
 
@@ -8,9 +8,19 @@
 *   **三核心 API 備援系統**：自動排序 `WebScraping.AI` > `ScrapingAnt` > `scrape.do`，具備全球住宅代理，自動繞過所有擋牆。
 *   **全方位防呆機制**：內建模糊比對演算法，自動偵測並攔截重複錄入。
 *   **資料庫自動匹配**：J 欄自動寫入 `XLOOKUP` 公式連動 `Customer` 表格。
-*   **四重數據儀表板**：首頁螢幕即時顯示抓取總量與三家 API 的剩餘額度。
+*   **視覺化數據儀表板**：首頁採用現代化 Grid 佈局，即時顯示 7 組 API 的進度環與剩餘額度。
 
 ## 📅 版本更迭紀錄
+
+### [2026-04-06] - 數據中心儀表板究極版 V35
+- **UI 現代化**：數據中心全面升級為「現代化儀表板 (Dashboard UI)」，採用玻璃擬態 (Glassmorphism) 風格與網格佈局，視覺質感大幅提升。
+- **視覺化進度環**：為各 API Key 實作動態 SVG 進度環。透過 `stroke-dashoffset` 技術精確呈現額度剩餘百分比，並支援 `stroke-linecap="round"` 圓潤視覺。
+- **智能顏色警報 (Smart Alerts)**：實作自動偵測機制：
+    - 🟢 **額度充裕 (≥50%)**：顯示主題紫色/青色/綠色。
+    - 🟠 **警戒狀態 (<50%)**：自動切換為橙色 (#ffab40)。
+    - 🔴 **危險狀態 (<20%)**：自動切換為鮮紅色 (#ff1744)。
+- **邏輯優化**：針對 WebScraping.AI API 缺失 `total` 欄位的特性，實施「自動補償機制 (Fallback)」，確保所有進度環皆能正確計算比例。
+- **渲染加強**：導入雙重渲染 (Dual-Rendering) 機制，確保數據載入後進度環顏色能穩定顯現，排除跨瀏覽器兼容性問題。
 
 ### [2026-04-05]
 - **功能改進**：擴充至 7 組付費 API（共 3 組 `WebScraping.AI`、3 組 `ScrapingAnt`、1 組 `scrape.do`），建構高達七道防線的終極自動接力備援機制，最大化抓取承載力。

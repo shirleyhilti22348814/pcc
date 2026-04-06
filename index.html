@@ -48,73 +48,113 @@
                 </main>
 
                 <!-- 數據儀表板放在輸入下方 -->
-                <section class="stats-grid animate__animated animate__fadeInUp animate__delay-1s">
-                    <div class="stat-card glass-card">
-                        <i class="fas fa-file-invoice stat-icon"></i>
-                        <div id="count-total" class="stat-value">0</div>
-                        <div class="stat-label">今日成功抓取筆數</div>
-                    </div>
-                    <div class="stat-card glass-card">
-                        <i class="fas fa-microchip stat-icon"></i>
-                        <div id="quota-ws" class="stat-value">---</div>
-                        <div class="stat-label">WebScraping.AI (1)</div>
-                        <div class="stat-detail">
-                            <span>總額: <span id="total-ws">---</span></span>
-                            <span>重置: <span id="reset-ws" class="reset-time">---</span></span>
+                <section class="dashboard-grid animate__animated animate__fadeInUp animate__delay-1s">
+                    <!-- 核心數據：今日總計 -->
+                    <div class="dash-card main-stat glass-card">
+                        <div class="dash-icon"><i class="fas fa-chart-line"></i></div>
+                        <div class="dash-info">
+                            <span class="dash-label">今日採集總數</span>
+                            <h2 id="count-total" class="dash-value">0</h2>
                         </div>
                     </div>
-                    <div class="stat-card glass-card">
-                        <i class="fas fa-microchip stat-icon"></i>
-                        <div id="quota-ws-2" class="stat-value">---</div>
-                        <div class="stat-label">WebScraping.AI (2)</div>
-                        <div class="stat-detail">
-                            <span>總額: <span id="total-ws-2">---</span></span>
-                            <span>重置: <span id="reset-ws-2" class="reset-time">---</span></span>
+
+                    <!-- API 狀態區：WebScraping.AI -->
+                    <div class="dash-card api-group glass-card">
+                        <div class="group-header">
+                            <i class="fas fa-microchip"></i> <span>WebScraping.AI</span>
+                        </div>
+                        <div class="api-instances">
+                            <div class="api-instance">
+                                <div class="progress-ring-container">
+                                    <svg class="progress-ring" width="60" height="60">
+                                        <circle class="progress-ring__circle-bg" stroke="rgba(255,255,255,0.05)" stroke-width="4" fill="transparent" r="26" cx="30" cy="30"/>
+                                        <circle id="ring-ws-1" class="progress-ring__circle" stroke="#7c4dff" stroke-width="4" stroke-dasharray="163.36 163.36" stroke-dashoffset="163.36" stroke-linecap="round" fill="transparent" r="26" cx="30" cy="30"/>
+                                    </svg>
+                                    <div id="quota-ws" class="ring-text">---</div>
+                                </div>
+                                <div class="api-label">#1</div>
+                            </div>
+                            <div class="api-instance">
+                                <div class="progress-ring-container">
+                                    <svg class="progress-ring" width="60" height="60">
+                                        <circle class="progress-ring__circle-bg" stroke="rgba(255,255,255,0.05)" stroke-width="4" fill="transparent" r="26" cx="30" cy="30"/>
+                                        <circle id="ring-ws-2" class="progress-ring__circle" stroke="#7c4dff" stroke-width="4" stroke-dasharray="163.36 163.36" stroke-dashoffset="163.36" stroke-linecap="round" fill="transparent" r="26" cx="30" cy="30"/>
+                                    </svg>
+                                    <div id="quota-ws-2" class="ring-text">---</div>
+                                </div>
+                                <div class="api-label">#2</div>
+                            </div>
+                            <div class="api-instance">
+                                <div class="progress-ring-container">
+                                    <svg class="progress-ring" width="60" height="60">
+                                        <circle class="progress-ring__circle-bg" stroke="rgba(255,255,255,0.05)" stroke-width="4" fill="transparent" r="26" cx="30" cy="30"/>
+                                        <circle id="ring-ws-3" class="progress-ring__circle" stroke="#7c4dff" stroke-width="4" stroke-dasharray="163.36 163.36" stroke-dashoffset="163.36" stroke-linecap="round" fill="transparent" r="26" cx="30" cy="30"/>
+                                    </svg>
+                                    <div id="quota-ws-3" class="ring-text">---</div>
+                                </div>
+                                <div class="api-label">#3</div>
+                            </div>
+                        </div>
+                        <div class="group-footer">
+                            <span class="reset-info"><i class="far fa-clock"></i> <span id="reset-ws-combined">重置: ---</span></span>
                         </div>
                     </div>
-                    <div class="stat-card glass-card">
-                        <i class="fas fa-microchip stat-icon"></i>
-                        <div id="quota-ws-3" class="stat-value">---</div>
-                        <div class="stat-label">WebScraping.AI (3)</div>
-                        <div class="stat-detail">
-                            <span>總額: <span id="total-ws-3">---</span></span>
-                            <span>重置: <span id="reset-ws-3" class="reset-time">---</span></span>
+
+                    <!-- API 狀態區：ScrapingAnt -->
+                    <div class="dash-card api-group glass-card">
+                        <div class="group-header">
+                            <i class="fas fa-rocket"></i> <span>ScrapingAnt</span>
+                        </div>
+                        <div class="api-instances">
+                            <div class="api-instance">
+                                <div class="progress-ring-container">
+                                    <svg class="progress-ring" width="60" height="60">
+                                        <circle class="progress-ring__circle-bg" stroke="rgba(255,255,255,0.05)" stroke-width="4" fill="transparent" r="26" cx="30" cy="30"/>
+                                        <circle id="ring-sa-1" class="progress-ring__circle" stroke="#00bcd4" stroke-width="4" stroke-dasharray="163.36 163.36" stroke-dashoffset="163.36" stroke-linecap="round" fill="transparent" r="26" cx="30" cy="30"/>
+                                    </svg>
+                                    <div id="quota-sa" class="ring-text">---</div>
+                                </div>
+                                <div class="api-label">#1</div>
+                            </div>
+                            <div class="api-instance">
+                                <div class="progress-ring-container">
+                                    <svg class="progress-ring" width="60" height="60">
+                                        <circle class="progress-ring__circle-bg" stroke="rgba(255,255,255,0.05)" stroke-width="4" fill="transparent" r="26" cx="30" cy="30"/>
+                                        <circle id="ring-sa-2" class="progress-ring__circle" stroke="#00bcd4" stroke-width="4" stroke-dasharray="163.36 163.36" stroke-dashoffset="163.36" stroke-linecap="round" fill="transparent" r="26" cx="30" cy="30"/>
+                                    </svg>
+                                    <div id="quota-sa-2" class="ring-text">---</div>
+                                </div>
+                                <div class="api-label">#2</div>
+                            </div>
+                            <div class="api-instance">
+                                <div class="progress-ring-container">
+                                    <svg class="progress-ring" width="60" height="60">
+                                        <circle class="progress-ring__circle-bg" stroke="rgba(255,255,255,0.05)" stroke-width="4" fill="transparent" r="26" cx="30" cy="30"/>
+                                        <circle id="ring-sa-3" class="progress-ring__circle" stroke="#00bcd4" stroke-width="4" stroke-dasharray="163.36 163.36" stroke-dashoffset="163.36" stroke-linecap="round" fill="transparent" r="26" cx="30" cy="30"/>
+                                    </svg>
+                                    <div id="quota-sa-3" class="ring-text">---</div>
+                                </div>
+                                <div class="api-label">#3</div>
+                            </div>
+                        </div>
+                        <div class="group-footer">
+                            <span class="reset-info"><i class="far fa-clock"></i> <span id="reset-sa-combined">重置: ---</span></span>
                         </div>
                     </div>
-                    <div class="stat-card glass-card">
-                        <i class="fas fa-rocket stat-icon"></i>
-                        <div id="quota-sa" class="stat-value">---</div>
-                        <div class="stat-label">ScrapingAnt (1)</div>
-                        <div class="stat-detail">
-                            <span>總額: <span id="total-sa">---</span></span>
-                            <span>重置: <span id="reset-sa" class="reset-time">---</span></span>
+
+                    <!-- API 狀態區：scrape.do -->
+                    <div class="dash-card api-basic glass-card">
+                        <div class="group-header">
+                            <i class="fas fa-shield-alt"></i> <span>scrape.do</span>
                         </div>
-                    </div>
-                    <div class="stat-card glass-card">
-                        <i class="fas fa-rocket stat-icon"></i>
-                        <div id="quota-sa-2" class="stat-value">---</div>
-                        <div class="stat-label">ScrapingAnt (2)</div>
-                        <div class="stat-detail">
-                            <span>總額: <span id="total-sa-2">---</span></span>
-                            <span>重置: <span id="reset-sa-2" class="reset-time">---</span></span>
-                        </div>
-                    </div>
-                    <div class="stat-card glass-card">
-                        <i class="fas fa-rocket stat-icon"></i>
-                        <div id="quota-sa-3" class="stat-value">---</div>
-                        <div class="stat-label">ScrapingAnt (3)</div>
-                        <div class="stat-detail">
-                            <span>總額: <span id="total-sa-3">---</span></span>
-                            <span>重置: <span id="reset-sa-3" class="reset-time">---</span></span>
-                        </div>
-                    </div>
-                    <div class="stat-card glass-card">
-                        <i class="fas fa-shield-alt stat-icon"></i>
-                        <div id="quota-sd" class="stat-value">---</div>
-                        <div class="stat-label">scrape.do</div>
-                        <div class="stat-detail">
-                            <span>總額: <span id="total-sd">---</span></span>
-                            <span>重置: <span id="reset-sd" class="reset-time">---</span></span>
+                        <div class="basic-content">
+                            <div class="progress-bar-container">
+                                <div class="bar-top">
+                                    <span id="quota-sd">---</span> <span class="muted">/ <span id="total-sd">---</span></span>
+                                </div>
+                                <div class="bar-track"><div id="bar-sd-fill" class="bar-fill" style="width: 0%"></div></div>
+                            </div>
+                            <div class="reset-info mini"><i class="far fa-calendar-alt"></i> <span id="reset-sd">---</span></div>
                         </div>
                     </div>
                 </section>
@@ -302,6 +342,8 @@
                 const result = await response.json();
                 if (result.status === "QuotaInfo") {
                     updateQuotaUI(result.data);
+                    // 額外強制觸獲一次更新，確保 DOM 完全渲染後才執行繪製
+                    setTimeout(() => updateQuotaUI(result.data), 100);
                 }
             } catch (e) {
                 console.error("無法取得額度", e);
@@ -311,53 +353,86 @@
         function updateQuotaUI(data) {
             if (!data) return;
             
+            const setRing = (id, rV, tV) => {
+                const ring = document.getElementById(id);
+                if (!ring) return;
+                
+                const cur = Number(rV);
+                let max = Number(tV);
+                
+                // 致命修正：WebScraping.AI 的後端資料沒有 total，預設會是 "---" (NaN)
+                if (isNaN(max) || max <= 0) {
+                    if (id.includes('ws')) max = 2000; // WebScraping 的預設總額
+                    else max = 1;
+                }
+                
+                const circ = 163.36;
+
+                // 比例計算
+                let pct = cur / max;
+                pct = Math.min(1.0, Math.max(0.0, pct));
+                
+                // 顏色判斷
+                let col = "#7c4dff"; 
+                if (id.includes('sa')) col = "#00bcd4";
+                if (pct < 0.2) col = "#ff1744";
+                else if (pct < 0.5) col = "#ffab40";
+
+                // 設定 SVG 屬性 (回到與 ScrapingAnt 一致的 offset 模式)
+                ring.setAttribute('stroke-dasharray', `${circ} ${circ}`);
+                ring.setAttribute('stroke-dashoffset', circ * (1 - pct));
+                ring.style.stroke = col;
+                ring.style.opacity = "1";
+                ring.style.visibility = "visible";
+            };
+
             // WebScraping.AI
             if (data.webscraping_ai) {
-                quotaWs.innerText = data.webscraping_ai.remain ?? "N/A";
-                document.getElementById('total-ws').innerText = data.webscraping_ai.total ?? "N/A";
-                document.getElementById('reset-ws').innerText = data.webscraping_ai.reset ?? "N/A";
+                quotaWs.innerText = data.webscraping_ai.remain ?? "---";
+                setRing('ring-ws-1', data.webscraping_ai.remain, data.webscraping_ai.total);
+                document.getElementById('reset-ws-combined').innerText = "重置: " + (data.webscraping_ai.reset ?? "---");
             }
-
-            // WebScraping.AI 2
             if (data.webscraping_ai_2) {
-                quotaWs2.innerText = data.webscraping_ai_2.remain ?? "N/A";
-                document.getElementById('total-ws-2').innerText = data.webscraping_ai_2.total ?? "N/A";
-                document.getElementById('reset-ws-2').innerText = data.webscraping_ai_2.reset ?? "N/A";
+                quotaWs2.innerText = data.webscraping_ai_2.remain ?? "---";
+                setRing('ring-ws-2', data.webscraping_ai_2.remain, data.webscraping_ai_2.total);
             }
-
-            // WebScraping.AI 3
             if (data.webscraping_ai_3) {
-                quotaWs3.innerText = data.webscraping_ai_3.remain ?? "N/A";
-                document.getElementById('total-ws-3').innerText = data.webscraping_ai_3.total ?? "N/A";
-                document.getElementById('reset-ws-3').innerText = data.webscraping_ai_3.reset ?? "N/A";
+                quotaWs3.innerText = data.webscraping_ai_3.remain ?? "---";
+                setRing('ring-ws-3', data.webscraping_ai_3.remain, data.webscraping_ai_3.total);
             }
             
             // ScrapingAnt
             if (data.scrapingant) {
-                quotaSa.innerText = data.scrapingant.remain ?? "N/A";
-                document.getElementById('total-sa').innerText = data.scrapingant.total ?? "N/A";
-                document.getElementById('reset-sa').innerText = data.scrapingant.reset ?? "N/A";
+                quotaSa.innerText = data.scrapingant.remain ?? "---";
+                setRing('ring-sa-1', data.scrapingant.remain, data.scrapingant.total);
+                document.getElementById('reset-sa-combined').innerText = "重置: " + (data.scrapingant.reset ?? "---");
             }
-            
-            // ScrapingAnt 2
             if (data.scrapingant_2) {
-                quotaSa2.innerText = data.scrapingant_2.remain ?? "N/A";
-                document.getElementById('total-sa-2').innerText = data.scrapingant_2.total ?? "N/A";
-                document.getElementById('reset-sa-2').innerText = data.scrapingant_2.reset ?? "N/A";
+                quotaSa2.innerText = data.scrapingant_2.remain ?? "---";
+                setRing('ring-sa-2', data.scrapingant_2.remain, data.scrapingant_2.total);
             }
-
-            // ScrapingAnt 3
             if (data.scrapingant_3) {
-                quotaSa3.innerText = data.scrapingant_3.remain ?? "N/A";
-                document.getElementById('total-sa-3').innerText = data.scrapingant_3.total ?? "N/A";
-                document.getElementById('reset-sa-3').innerText = data.scrapingant_3.reset ?? "N/A";
+                quotaSa3.innerText = data.scrapingant_3.remain ?? "---";
+                setRing('ring-sa-3', data.scrapingant_3.remain, data.scrapingant_3.total);
             }
 
             // scrape.do
             if (data.scrapedo) {
-                quotaSd.innerText = data.scrapedo.remain ?? "N/A";
-                document.getElementById('total-sd').innerText = data.scrapedo.total ?? "N/A";
-                document.getElementById('reset-sd').innerText = data.scrapedo.reset ?? "N/A";
+                const remain = Number(data.scrapedo.remain ?? 0);
+                const total = Number(data.scrapedo.total ?? 1);
+                const percent = (remain / total) * 100;
+                
+                quotaSd.innerText = remain;
+                document.getElementById('total-sd').innerText = total;
+                document.getElementById('reset-sd').innerText = "Reset: " + (data.scrapedo.reset ?? "---");
+                
+                const barFill = document.getElementById('bar-sd-fill');
+                barFill.style.width = percent + "%";
+                
+                // scrape.do 智能顏色警報
+                if (percent < 20) barFill.style.background = "#ff1744"; // 紅
+                else if (percent < 50) barFill.style.background = "#ffab40"; // 橙
+                else barFill.style.background = "linear-gradient(90deg, #00e676, #00c853)"; // 綠
             }
         }
 

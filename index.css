@@ -321,82 +321,194 @@ input[type="text"]:focus, textarea:focus {
     transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 數據儀表板樣式 */
-.stats-grid {
+/* 數據儀表板 - 全新進度環設計 */
+.dashboard-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.75rem;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto auto;
+    gap: 1rem;
     margin-top: 1rem;
-    width: 100%;
 }
 
-@media (max-width: 992px) {
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-        margin-top: 1.25rem;
+.dash-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1.25rem !important;
+    min-height: 140px;
+}
+
+.main-stat {
+    grid-column: span 2;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1.5rem;
+    min-height: 100px;
+    background: linear-gradient(135deg, rgba(124, 77, 255, 0.1), rgba(68, 138, 255, 0.1));
+    border: 1px solid rgba(124, 77, 255, 0.2);
+}
+
+.dash-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--accent);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    box-shadow: 0 0 15px var(--accent-glow);
+}
+
+.dash-info .dash-label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+}
+
+.dash-info .dash-value {
+    font-size: 2rem;
+    font-weight: 800;
+}
+
+/* API Group Design */
+.api-group {
+    grid-column: span 1;
+}
+
+.group-header {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.group-header i {
+    color: var(--accent);
+}
+
+.api-instances {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.api-instance {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.progress-ring-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ring-text {
+    position: absolute;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.api-label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.progress-ring__circle {
+    transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+    fill: none !important;
+    display: block !important;
+}
+
+.group-footer {
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.reset-info {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+/* scrape.do basic style */
+.api-basic {
+    grid-column: span 2;
+    min-height: auto;
+}
+
+.basic-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.progress-bar-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.bar-top {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.bar-top .muted {
+    font-weight: 400;
+    color: var(--text-muted);
+}
+
+.bar-track {
+    width: 100%;
+    height: 8px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #00e676, #00c853);
+    transition: width 0.5s ease;
+}
+
+.reset-info.mini {
+    justify-content: flex-end;
+}
+
+@media (max-width: 1200px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    .api-group, .api-basic {
+        grid-column: span 1;
     }
 }
 
 @media (max-width: 480px) {
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 0.75rem;
+    .api-instances {
+        flex-wrap: wrap;
+        justify-content: center;
     }
-}
-
-.stat-card {
-    text-align: center;
-    padding: 0.75rem 0.25rem !important;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 0.25rem;
-}
-
-.stat-icon {
-    font-size: 1rem;
-    color: var(--accent);
-    margin-bottom: 0.25rem;
-}
-
-.stat-value {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin-bottom: 0.1rem;
-}
-
-.stat-label {
-    font-size: 0.65rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    margin-bottom: 0.25rem;
-    line-height: 1.1;
-}
-
-/* 額度細節樣式 */
-.stat-detail {
-    margin-top: 0.25rem;
-    padding-top: 0.5rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    text-align: center;
-    width: 100%;
-}
-
-.stat-detail span {
-    font-size: 0.6rem;
-    color: var(--text-muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.reset-time {
-    color: #b388ff !important;
 }
 
 /* 最近活動區樣式 */
