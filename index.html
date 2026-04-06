@@ -142,21 +142,6 @@
                         </div>
                     </div>
 
-                    <!-- API 狀態區：scrape.do -->
-                    <div class="dash-card api-basic glass-card">
-                        <div class="group-header">
-                            <i class="fas fa-shield-alt"></i> <span>scrape.do</span>
-                        </div>
-                        <div class="basic-content">
-                            <div class="progress-bar-container">
-                                <div class="bar-top">
-                                    <span id="quota-sd">---</span> <span class="muted">/ <span id="total-sd">---</span></span>
-                                </div>
-                                <div class="bar-track"><div id="bar-sd-fill" class="bar-fill" style="width: 0%"></div></div>
-                            </div>
-                            <div class="reset-info mini"><i class="far fa-calendar-alt"></i> <span id="reset-sd">---</span></div>
-                        </div>
-                    </div>
                 </section>
             </div>
 
@@ -187,7 +172,6 @@
         const quotaSa = document.getElementById('quota-sa');
         const quotaSa2 = document.getElementById('quota-sa-2');
         const quotaSa3 = document.getElementById('quota-sa-3');
-        const quotaSd = document.getElementById('quota-sd');
         const logList = document.getElementById('log-list');
         const statusBox = document.getElementById('status-display');
         const msgTitle = document.getElementById('msg-title');
@@ -416,24 +400,6 @@
                 setRing('ring-sa-3', data.scrapingant_3.remain, data.scrapingant_3.total);
             }
 
-            // scrape.do
-            if (data.scrapedo) {
-                const remain = Number(data.scrapedo.remain ?? 0);
-                const total = Number(data.scrapedo.total ?? 1);
-                const percent = (remain / total) * 100;
-                
-                quotaSd.innerText = remain;
-                document.getElementById('total-sd').innerText = total;
-                document.getElementById('reset-sd').innerText = "Reset: " + (data.scrapedo.reset ?? "---");
-                
-                const barFill = document.getElementById('bar-sd-fill');
-                barFill.style.width = percent + "%";
-                
-                // scrape.do 智能顏色警報
-                if (percent < 20) barFill.style.background = "#ff1744"; // 紅
-                else if (percent < 50) barFill.style.background = "#ffab40"; // 橙
-                else barFill.style.background = "linear-gradient(90deg, #00e676, #00c853)"; // 綠
-            }
         }
 
         function showResult(title, details, isError) {
