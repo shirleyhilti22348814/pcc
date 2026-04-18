@@ -296,10 +296,15 @@
                 updateProgress(progressPercent, `<strong>目前進度： ( ${i+1} / ${lines.length} ) 筆</strong> <br><small style="opacity:0.7">第 ${i+1} 筆處理已完成</small>`);
 
                 if (i < lines.length - 1 && !isStopped) {
-                    for (let sec = 10; sec > 0; sec--) {
+                    // 隨機產生 4000 至 6000 毫秒的延遲
+                    const randomDelay = Math.floor(Math.random() * (6000 - 4000 + 1)) + 4000;
+                    const startTime = Date.now();
+                    
+                    while (Date.now() - startTime < randomDelay) {
                         if (isStopped) break;
-                        showResult(`冷卻中 (${i+1}/${lines.length})`, `為了躲避防護牆，${sec} 秒後抓取下一筆...`, false);
-                        await new Promise(r => setTimeout(r, 1000));
+                        const remaining = Math.max(0, (randomDelay - (Date.now() - startTime)) / 1000).toFixed(1);
+                        showResult(`冷卻中 (${i+1}/${lines.length})`, `為了躲避防護牆，隨機延遲 ${remaining} 秒後抓取下一筆...`, false);
+                        await new Promise(r => setTimeout(r, 100));
                     }
                 }
             }

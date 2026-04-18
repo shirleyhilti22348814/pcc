@@ -1,4 +1,4 @@
-![Last Updated](https://img.shields.io/badge/Last_Updated-2026--04--06-blue.svg?style=for-the-badge)
+![Last Updated](https://img.shields.io/badge/Last_Updated-2026--04--18-blue.svg?style=for-the-badge)
 ![API Status](https://img.shields.io/badge/API_Engine-Double_Fallback-success.svg?style=for-the-badge)
 ![Sheet Logic](https://img.shields.io/badge/Sheet_Logic-XLOOKUP-orange.svg?style=for-the-badge)
 
@@ -11,6 +11,10 @@
 *   **視覺化數據儀表板**：首頁採用現代化 Grid 佈局，即時顯示 6 組 API 的進度環與剩餘額度。
 
 ## 📅 版本更迭紀錄
+
+### [2026-04-18] - 智能動態避蹤版 V36
+- **隨機動態延遲 (Random Dynamic Delay)**：將原本固定的 10 秒冷卻間隔升級為「隨機 4 ~ 6 秒 (4000 ~ 6000ms) 動態延遲」。更能有效模仿人類行為，規避網站防爬機制。
+- **毫秒級倒數 UI**：實作 0.1 秒精度的動態倒數顯示，冷卻過程更具質感且透明。
 
 ### [2026-04-06] - 數據中心儀表板究極版 V35
 - **UI 現代化**：數據中心全面升級為「現代化儀表板 (Dashboard UI)」，採用玻璃擬態 (Glassmorphism) 風格與網格佈局，視覺質感大幅提升。
